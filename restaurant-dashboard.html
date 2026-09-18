@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Portal | FeastDash</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-flex">
+      <a href="index.html" class="brand">🍳 Feast<span>Kitchen</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Customer View</a>
+        <a href="restaurant-dashboard.html" class="active">Kitchen Kanban</a>
+        <a href="delivery-dashboard.html">Courier Hub</a>
+      </nav>
+      <span class="btn btn-sm btn-outline" style="color: #10b981; border-color: #10b981;">● Online (Accepting Orders)</span>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 25px;">
+    <h2>Kitchen Live Orders (Kanban Board)</h2>
+    <p style="color: #64748b; font-size: 13px;">Manage incoming kitchen pipeline and advance order statuses in real-time.</p>
+
+    <div class="kanban">
+      <div class="kanban-col">
+        <h3>1. Incoming Orders</h3>
+        <div id="col-placed"></div>
+      </div>
+      <div class="kanban-col">
+        <h3>2. Cooking in Kitchen</h3>
+        <div id="col-cooking"></div>
+      </div>
+      <div class="kanban-col">
+        <h3>3. Ready for Courier</h3>
+        <div id="col-ready"></div>
+      </div>
+      <div class="kanban-col">
+        <h3>4. Dispatched / Done</h3>
+        <div id="col-done"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const defaultOrders = [
+      { id: 'ORD-9842', customer: 'Alex Morgan', items: [{ name: 'Truffle Pizza', qty: 1 }], status: 'cooking' },
+      { id: 'ORD-9843', customer: 'Sarah Jenkins', items: [{ name: 'Bourbon Burger', qty: 2 }], status: 'placed' }
+    ];
+
+    function getOrders() {
+      let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      if (orders.length === 0) { orders = defaultOrders; localStorage.setItem('orders', JSON.stringify(orders)); }
+      return orders;
+    }
+
+    function render() {
+      const orders = getOrders();
+      const cols = { placed: [], cooking: [], ready: [], done: [] };
+
+      orders.forEach(o => {
+        const st = o.status || 'placed';
+        if (st === 'placed') cols.placed.push(o);
+        else if (st === 'cooking' || st === 'preparing') cols.cooking.push(o);
+        else if (st === 'ready' || st === 'ready_for_pickup') cols.ready.push(o);
+        else cols.done.push(o);
+      });
+
+      const renderCard = (o, btnText, nextSt) => `
+        <div class="k-card">
+          <strong>${o.id}</strong> - ${o.customer || 'Customer'}
+          <div style="color: #64748b; font-size: 12px; margin: 4px 0;">
+            ${(o.items || []).map(i => `${i.qty}x ${i.name}`).join(', ')}
+          </div>
+          ${nextSt ? `<button onclick="advance('${o.id}', '${nextSt}')" class="btn btn-sm" style="width: 100%; margin-top: 6px;">${btnText}</button>` : '<div style="color: #10b981; font-weight: bold; font-size: 11px;">✓ Completed</div>'}
+        </div>
+      `;
+
+      document.getElementById('col-placed').innerHTML = cols.placed.map(o => renderCard(o, 'Accept & Start Prep', 'cooking')).join('') || '<p style="color:#94a3b8;font-size:12px;">No new orders</p>';
+      document.getElementById('col-cooking').innerHTML = cols.cooking.map(o => renderCard(o, 'Mark Ready for Driver', 'ready')).join('') || '<p style="color:#94a3b8;font-size:12px;">Kitchen clear</p>';
+      document.getElementById('col-ready').innerHTML = cols.ready.map(o => renderCard(o, 'Hand to Courier', 'enroute')).join('') || '<p style="color:#94a3b8;font-size:12px;">No orders waiting</p>';
+      document.getElementById('col-done').innerHTML = cols.done.map(o => renderCard(o, '', null)).join('') || '<p style="color:#94a3b8;font-size:12px;">No dispatched orders</p>';
+    }
+
+    function advance(orderId, nextStatus) {
+      let orders = getOrders();
+      const ord = orders.find(o => o.id === orderId);
+      if (ord) ord.status = nextStatus;
+      localStorage.setItem('orders', JSON.stringify(orders));
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,36 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cart - FoodExpress</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Cart & Checkout | FeastDash</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-<header>
-    <h2>🍴 FoodExpress</h2>
-    <nav>
+  <header class="navbar">
+    <div class="container nav-flex">
+      <a href="index.html" class="brand">🍕 Feast<span>Dash</span></a>
+      <nav class="nav-links">
         <a href="index.html">Home</a>
         <a href="restaurants.html">Restaurants</a>
-        <a href="menu.html">Menu</a>
-    </nav>
-</header>
-
-<div class="container">
-    <p class="small-title">YOUR CART</p>
-    <h1>🛒 Your Cart</h1>
-
-    <div class="cart-box">
-        <div id="cartItems">
-            <!-- Cart items will appear here -->
-        </div>
-
-        <h2>Total: ₹<span id="total">0</span></h2>
-
-        <button onclick="placeOrder()">Place Order</button>
+        <a href="order.html">Track Order</a>
+        <a href="restaurant-dashboard.html">Kitchen Hub</a>
+        <a href="delivery-dashboard.html">Courier Hub</a>
+      </nav>
+      <a href="cart.html" class="cart-pill" style="background: var(--primary);">🛒 Cart</a>
     </div>
-</div>
+  </header>
 
-<script src="js/script.js"></script>
+  <main class="container" style="padding-top: 25px; max-width: 800px;">
+    <h2>Your Basket & Checkout</h2>
 
+    <div class="box" style="margin-top: 15px;">
+      <div id="cart-items"></div>
+
+      <!-- Delivery Schedule Option -->
+      <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border);">
+        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Delivery Schedule:</label>
+        <select id="schedule-type" class="input-control" style="margin-bottom: 15px;">
+          <option value="Instant">⚡ Instant Delivery (25-35 min)</option>
+          <option value="Today 1:00 PM">📅 Schedule: Today (1:00 PM - 1:30 PM)</option>
+          <option value="Today 7:00 PM">📅 Schedule: Tonight (7:00 PM - 7:30 PM)</option>
+          <option value="Tomorrow 12:30 PM">📅 Schedule: Tomorrow (12:30 PM - 1:00 PM)</option>
+        </select>
+
+        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Delivery Address:</label>
+        <input type="text" id="address" value="742 Evergreen Terrace, Apt 4B" class="input-control" style="margin-bottom: 15px;">
+      </div>
+
+      <!-- Bill Total -->
+      <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; margin-top: 15px; padding-top: 10px; border-top: 2px solid var(--border);">
+        <span>Total Amount:</span>
+        <span id="cart-total" style="color: var(--primary);">$0.00</span>
+      </div>
+
+      <button onclick="placeOrder()" class="btn btn-block" style="margin-top: 20px; padding: 12px; font-size: 15px;">
+        Confirm & Place Order
+      </button>
+    </div>
+  </main>
+
+  <script>
+    function render() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const container = document.getElementById('cart-items');
+
+      if (cart.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Your cart is empty. <a href="restaurants.html">Browse food</a></p>';
+        document.getElementById('cart-total').textContent = '$0.00';
+        return;
+      }
+
+      let total = 0;
+      container.innerHTML = cart.map((item, idx) => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        return `
+          <div class="item-row">
+            <div>
+              <strong>${item.name}</strong>
+              <div style="font-size: 12px; color: #64748b;">$${item.price.toFixed(2)} each</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button onclick="changeQty(${idx}, -1)" class="btn btn-outline btn-sm">-</button>
+              <strong>${item.qty}</strong>
+              <button onclick="changeQty(${idx}, 1)" class="btn btn-outline btn-sm">+</button>
+              <span style="font-weight: bold; width: 60px; text-align: right;">$${itemTotal.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('cart-total').textContent = `$${(total + 2.50).toFixed(2)} (incl. $2.50 delivery)`;
+    }
+
+    function changeQty(idx, delta) {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      render();
+    }
+
+    function placeOrder() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart.length === 0) return alert('Your cart is empty!');
+
+      const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+      const schedule = document.getElementById('schedule-type').value;
+      const address = document.getElementById('address').value;
+
+      const order = {
+        id: orderId,
+        items: cart,
+        schedule: schedule,
+        address: address,
+        status: 'placed',
+        createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.unshift(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.setItem('cart', JSON.stringify([]));
+
+      alert('Order Placed Successfully! Order ID: ' + orderId);
+      window.location.href = 'order.html';
+    }
+
+    render();
+  </script>
 </body>
 </html>

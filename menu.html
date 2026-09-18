@@ -1,40 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Menu - FoodExpress</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Menu | FeastDash</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-
-<header>
-    <h2>🍴 FoodExpress</h2>
-
-    <nav>
+  <header class="navbar">
+    <div class="container nav-flex">
+      <a href="index.html" class="brand">🍕 Feast<span>Dash</span></a>
+      <nav class="nav-links">
         <a href="index.html">Home</a>
-        <a href="restaurants.html">Restaurants</a>
-        <a href="menu.html">Menu</a>
-        <a href="cart.html">Cart 🛒</a>
-    </nav>
-</header>
+        <a href="restaurants.html" class="active">Restaurants</a>
+        <a href="order.html">Track Order</a>
+        <a href="restaurant-dashboard.html">Kitchen Hub</a>
+        <a href="delivery-dashboard.html">Courier Hub</a>
+      </nav>
+      <a href="cart.html" class="cart-pill">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </div>
+  </header>
 
+  <main class="container" style="padding-top: 25px;">
+    <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1 id="rest-name">Bella Italia Trattoria</h1>
+        <p style="color: #64748b; font-size: 13px;">Wood-fired Gourmet Pizzas & Pastas • ⏱️ 25-35 min delivery</p>
+      </div>
+      <a href="cart.html" class="btn">Go to Cart →</a>
+    </div>
 
-<div class="container">
+    <h2>Popular Dishes</h2>
+    <div class="grid-cards" id="menu-grid"></div>
+  </main>
 
-    <p class="small-title">FOODEXPRESS MENU</p>
+  <script>
+    const dishes = [
+      { id: '101', name: 'Truffle & Mushroom Pizza', price: 150, desc: 'Wild mushrooms, mozzarella, truffle oil drizzle', img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80' },
+      { id: '102', name: 'Handmade  Pasta', price: 160, desc: '8-hour slow braised beef & pork bolognese', img: 'https://images.unsplash.com/photo-1621996346565-e3d5d628169e?w=500&q=80' },
+      { id: '103', name: 'Classic Margherita Pizza', price: 140, desc: 'San Marzano tomatoes, fresh bufala mozzarella, basil', img: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=500&q=80' },
+      { id: '104', name: 'Espresso Tiramisu', price: 350, desc: 'Mascarpone cream, dark roasted espresso ladyfingers', img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&q=80' }
+    ];
 
-    <h1 id="title">Our Menu 🍽️</h1>
+    document.getElementById('menu-grid').innerHTML = dishes.map(d => `
+      <div class="card">
+        <img src="${d.img}" class="card-img" alt="${d.name}">
+        <div class="card-body">
+          <h3 class="card-title">${d.name}</h3>
+          <p class="card-meta">${d.desc}</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <strong style="font-size: 16px;">$${d.price.toFixed(2)}</strong>
+            <button onclick="addToCart('${d.id}')" class="btn btn-sm">+ Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
 
-    <div id="menu" class="cards"></div>
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+    }
 
-    <br>
+    function addToCart(dishId) {
+      const dish = dishes.find(d => d.id === dishId);
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const item = cart.find(c => c.id === dishId);
+      if (item) item.qty += 1;
+      else cart.push({ id: dish.id, name: dish.name, price: dish.price, qty: 1 });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateBadge();
+      alert(dish.name + ' added to your cart!');
+    }
 
-    <a href="cart.html" class="btn">View Cart 🛒</a>
-
-</div>
-
-
-<script src="js/script.js"></script>
-
+    updateBadge();
+  </script>
 </body>
 </html>

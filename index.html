@@ -1,96 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>FoodExpress</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>FOODEXPRESS | Online Food Delivery</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-
-<header>
-    <h2>🍴 FoodExpress</h2>
-
-    <nav>
-        <a href="index.html">Home</a>
+  <header class="navbar">
+    <div class="container nav-flex">
+      <a href="index.html" class="brand">🍕 Feast<span>Dash</span></a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
         <a href="restaurants.html">Restaurants</a>
-        <a href="menu.html">Menu</a>
-        <a href="cart.html">Cart 🛒</a>
-    </nav>
-</header>
-
-
-<section class="hero">
-
-    <div class="hero-text">
-
-        <p class="small-title">FAST • FRESH • DELICIOUS</p>
-
-        <h1>Good Food.<br>Good Mood. 😋</h1>
-
-        <p>
-            Order your favourite food from nearby restaurants
-            and get it delivered to your doorstep.
-        </p>
-
-        <a href="restaurants.html" class="btn">
-            Order Now 🍽️
-        </a>
-
+        <a href="order.html">Track Order</a>
+        <a href="restaurant-dashboard.html">Kitchen Hub</a>
+        <a href="delivery-dashboard.html">Courier Hub</a>
+      </nav>
+      <a href="cart.html" class="cart-pill">🛒 Cart (<span id="cart-count">0</span>)</a>
     </div>
+  </header>
 
-    <div class="hero-food">
-        🍕
-    </div>
+  <main class="container">
+    <section class="hero">
+      <h1>Hot Gourmet Food Delivered Fast</h1>
+      <p>Browse favorite local restaurants, customize dishes, and track your delivery in real-time.</p>
+      <a href="restaurants.html" class="btn">Explore Restaurants →</a>
+    </section>
 
-</section>
+    <h2>Featured Kitchens</h2>
+    <div class="grid-cards" id="featured-grid"></div>
+  </main>
 
+  <script>
+    const restaurants = [
+      { id: '1', name: 'Bella Italia Trattoria', cuisine: 'Italian • Pizza • Pasta', rating: 4.8, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80', time: '25-35 min' },
+      { id: '2', name: 'Craft Burger Co.', cuisine: 'American • Burgers • Fries', rating: 4.7, img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80', time: '20-30 min' },
+      { id: '3', name: 'Sakura Zen Ramen', cuisine: 'Japanese • Ramen • Sushi', rating: 4.9, img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80', time: '30-40 min' }
+    ];
 
-<section class="why">
-
-    <p class="small-title">WHY FOOD EXPRESS?</p>
-
-    <h1>Everything you need for a great meal</h1>
-
-    <div class="features">
-
-        <div>
-            <h2>⚡ Fast Delivery</h2>
-            <p>Quick and safe food delivery.</p>
+    document.getElementById('featured-grid').innerHTML = restaurants.map(r => `
+      <div class="card">
+        <img src="${r.img}" class="card-img" alt="${r.name}">
+        <div class="card-body">
+          <h3 class="card-title">${r.name}</h3>
+          <p class="card-meta">${r.cuisine} • ⭐ ${r.rating} • ⏱️ ${r.time}</p>
+          <a href="menu.html?id=${r.id}" class="btn btn-dark" style="width: 100%; text-align: center;">View Menu</a>
         </div>
+      </div>
+    `).join('');
 
-        <div>
-            <h2>🍽️ Great Food</h2>
-            <p>Choose from different tasty dishes.</p>
-        </div>
-
-        <div>
-            <h2>📍 Easy Ordering</h2>
-            <p>Order your favourite food easily.</p>
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="container">
-
-    <p class="small-title">READY TO ORDER?</p>
-
-    <h1>Hungry already? 😋</h1>
-
-    <p>Explore restaurants and find your favourite meal.</p>
-
-    <a href="restaurants.html" class="btn">
-        Explore Restaurants
-    </a>
-
-</section>
-
-
-<footer>
-    <p>© 2026 FoodExpress 🍴</p>
-</footer>
-
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+  </script>
 </body>
 </html>

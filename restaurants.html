@@ -1,53 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Restaurants</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Restaurants | FeastDash</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-<header>
-    <h2>🍴 FoodExpress</h2>
-    <nav>
+  <header class="navbar">
+    <div class="container nav-flex">
+      <a href="index.html" class="brand">🍕 Feast<span>Dash</span></a>
+      <nav class="nav-links">
         <a href="index.html">Home</a>
-        <a href="restaurants.html">Restaurants</a>
-        <a href="cart.html">Cart 🛒</a>
-    </nav>
-</header>
-
-<div class="container">
-    <h1>Restaurants Near You</h1>
-    <input type="text" id="search" placeholder="Search restaurant...">
-
-    <div class="cards">
-
-        <div class="card">
-            <img src="Biryani.webp">
-            <h2>Biryani House</h2>
-            <p>🍗 Biryani & Mughlai</p>
-            <p>⭐ 4.7 | 🕒 20 min</p>
-            <a href="menu.html" class="btn">View Menu</a>
-        </div>
-
-        <div class="card">
-            <img src="download.webp">
-            <h2>Pizza Corner</h2>
-            <p>🍕 Pizza & Fast Food</p>
-            <p>⭐ 4.5 | 🕒 25 min</p>
-            <a href="menu.html" class="btn">View Menu</a>
-        </div>
-
-        <div class="card">
-            <img src="OIP.webp">
-            <h2>Burger Point</h2>
-            <p>🍔 Burgers & Snacks</p>
-            <p>⭐ 4.3 | 🕒 30 min</p>
-            <a href="menu.html" class="btn">View Menu</a>
-        </div>
-
+        <a href="restaurants.html" class="active">Restaurants</a>
+        <a href="order.html">Track Order</a>
+        <a href="restaurant-dashboard.html">Kitchen Hub</a>
+        <a href="delivery-dashboard.html">Courier Hub</a>
+      </nav>
+      <a href="cart.html" class="cart-pill">🛒 Cart (<span id="cart-count">0</span>)</a>
     </div>
-</div>
+  </header>
 
-<script src="js/script.js"></script>
+  <main class="container" style="padding-top: 25px;">
+    <h2>All Partner Restaurants</h2>
+    <div style="margin: 15px 0; display: flex; gap: 10px;">
+      <input type="text" id="search" placeholder="Search by restaurant name or cuisine..." class="input-control" style="flex: 1;">
+      <select id="cuisine-filter" class="input-control" style="width: 180px;">
+        <option value="all">All Cuisines</option>
+        <option value="Italian">Italian</option>
+        <option value="American">American</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Indian">Indian</option>
+      </select>
+    </div>
+
+    <div class="grid-cards" id="restaurant-grid"></div>
+  </main>
+
+  <script>
+    const data = [
+      { id: '1', name: 'Bella Italia Trattoria', cuisine: 'Italian', rating: 4.8, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80', time: '25-35 min' },
+      { id: '2', name: 'Craft Burger Co.', cuisine: 'American', rating: 4.7, img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80', time: '20-30 min' },
+      { id: '3', name: 'Sakura Zen Ramen', cuisine: 'Japanese', rating: 4.9, img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80', time: '30-40 min' },
+      { id: '4', name: 'Spice Symphony Tandoor', cuisine: 'Indian', rating: 4.6, img: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=500&q=80', time: '35-45 min' }
+    ];
+
+    function render() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const cat = document.getElementById('cuisine-filter').value;
+      const list = data.filter(r => (cat === 'all' || r.cuisine === cat) && r.name.toLowerCase().includes(q));
+
+      document.getElementById('restaurant-grid').innerHTML = list.map(r => `
+        <div class="card">
+          <img src="${r.img}" class="card-img" alt="${r.name}">
+          <div class="card-body">
+            <h3 class="card-title">${r.name}</h3>
+            <p class="card-meta">${r.cuisine} • ⭐ ${r.rating} • ⏱️ ${r.time}</p>
+            <a href="menu.html?id=${r.id}" class="btn btn-dark" style="width: 100%; text-align: center;">View Menu</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('search').oninput = render;
+    document.getElementById('cuisine-filter').onchange = render;
+    render();
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+  </script>
 </body>
 </html>
