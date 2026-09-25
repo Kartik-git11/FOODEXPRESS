@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Food Express</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header class="header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🍔</div>
+      Food <span>Express</span>
+    </a>
+    <nav class="nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="index.html#menuSection">Menu</a>
+      <a href="orders.html" id="ordersLink" style="display:none;">Orders</a>
+      <a href="profile.html" id="profileLink" style="display:none;">Profile</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cart.html" class="cart-btn">🛒<span class="cart-count" id="cartCount" style="display:none;">0</span></a>
+      <a href="login.html" class="btn btn-outline btn-small active" id="loginBtn">Login</a>
+      <a href="register.html" class="btn btn-primary btn-small" id="registerBtn">Sign Up</a>
+      <button class="btn btn-outline btn-small" id="logoutBtn" style="display:none;" onclick="logoutUser()">Logout</button>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1>Welcome Back 👋</h1>
+      <p class="sub">Sign in to continue ordering delicious food</p>
+
+      <div class="error-msg" id="loginError"></div>
+      <div class="success-msg" id="loginSuccess"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="example@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" style="height:50px; margin-top:8px;">Sign In</button>
+      </form>
+
+      <div style="text-align:right; margin-top:12px;">
+        <a href="forgot-password.html" style="color:var(--primary); font-weight:600; font-size:0.9rem;">Forgot Password?</a>
+      </div>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="register.html">Create Account</a>
+      </div>
+
+      <div style="margin-top:20px; padding:12px; background:var(--light); border-radius:10px; font-size:0.82rem; color:var(--gray);">
+        <b>Demo credentials:</b><br>
+        Register a new account or use any registered email.<br>
+        All data stored in localStorage (frontend only).
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
